@@ -1,5 +1,5 @@
-// const userControllers = require('./user-controllers')
+const userControllers = require('./userControllers')
 
-// module.exports ={
-// userControllers,
-// }
+module.exports ={
+userControllers,
+}
