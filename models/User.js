@@ -48,6 +48,14 @@ userSchema.methods.validatePass = async function (formPassword) {
     return is - valid
 };
 
+userSchema.set('toJSON', {
+    transform: (_, user) => {
+        delete user.password;
+        delete user.__v;
+        return user;
+}
+});
+
 const User = model('User', userSchema);
 
 module.exports = User;
