@@ -26,6 +26,13 @@ const thoughtSchema = new Schema(
     });
 
 
+thoughtSchema.set('toJSON', {
+    transform: (_, thought) => {
+        delete thought.__v;
+        return thought;
+    }
+});
+
 const Thought = model('Thought', thoughtSchema);
 
 module.exports = Thought;

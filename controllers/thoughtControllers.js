@@ -1,12 +1,12 @@
 const Thought = require('../models/Thought')
 const { handleRouteError } = require('../helpers');
 const thoughtController = {
-    // function to create a user using the post route
+    // function to create a thought using the post route
     async createThought(req, res) {
         try {
             const thought = await Thought.create(req.body);
 
-            res.json(this.getThoughtById);
+            res.json(thought);
         } catch (error) {
             handleRouteError(error, res)
         }
@@ -30,9 +30,6 @@ const thoughtController = {
             if (!thought) return res.status(404).json({
                 message: 'Thought with that ID not found'
             })
-            if (thought) return res.status(404).json({
-                message: 'Thought with that ID could not be found'
-            })
 
             res.json(thought)
 
@@ -42,9 +39,9 @@ const thoughtController = {
     },
     // Function to update a single thought by ID
     async updateThoughtById(req, res) {
-        const thoughtText = req.body
+        const { thoughtText } = req.body
         try {
-            const thought = await UserThought.findByIdAndUpdate(req.params.thought_id, {
+            const thought = await Thought.findByIdAndUpdate(req.params.thought_id, {
                 $set: {
                     thoughtText: thoughtText
                 }
@@ -62,15 +59,54 @@ const thoughtController = {
     // Function to delete a single thought by ID
     async deleteThoughtById(req, res) {
         try {
-            await Thought.deleteOne({ _id: req.params.user_id })
+            await Thought.deleteOne({ _id: req.params.thought_id })
             res.json({
                 message: 'Thought deleted successfully'
             })
         } catch (err) {
             handleRouteError(err, res);
         }
+    },
+
+    // function to create a reaction using the post route
+    async createReaction(req, res) {
+        try {
+            const reaction = await Thought.findByIdAndUpdate(req.params.thought_id, {
+                $push: {
+                    reactions: req.body
+                }
+            }, {
+                runValidators: true,
+                new: true
+            });
+
+            res.json(reaction);
+        } catch (error) {
+            handleRouteError(error, res)
+        }
+    },
+
+    // Function to delete a single reaction by its ID
+    async deleteReactionById(req, res) {
+        try {
+            const reaction = await Thought.findByIdAndUpdate(req.params.thought_id, {
+                $pull: {
+                    reactions: {
+                        reactionId: req.params.reaction_id
+                    }
+                }
+            }, {
+                runValidators: true,
+                new: true
+            });
+
+            res.json(reaction);
+        } catch (error) {
+            handleRouteError(error, res)
+        }
     }
 }
+
 
 
 
