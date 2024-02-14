@@ -1,3 +1,5 @@
+// All the errors and the messages it will display
+
 function handleRouteError(err, res) {
 
     console.log(err)

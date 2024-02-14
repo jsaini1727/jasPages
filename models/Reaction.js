@@ -1,4 +1,4 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const dayjs = require('dayjs');
 
 
@@ -6,7 +6,7 @@ const reactionSchema = new Schema(
     {
         reactionId: {
             type: Schema.Types.ObjectId,
-            default: () => new mongoose.Types.ObjectId()
+            default: () => new Types.ObjectId()
         },
 
         reactionBody: {
@@ -31,5 +31,6 @@ const reactionSchema = new Schema(
     });
 
 
-
+    
 module.exports = reactionSchema;
+
