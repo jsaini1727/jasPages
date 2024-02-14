@@ -4,9 +4,9 @@ const thoughtController = {
     // function to create a user using the post route
     async createThought(req, res) {
         try {
-            const user = await Thought.create(req.body);
+            const thought = await Thought.create(req.body);
 
-            res.json(user);
+            res.json(this.getThoughtById);
         } catch (error) {
             handleRouteError(error, res)
         }
@@ -26,9 +26,9 @@ const thoughtController = {
     // Function to get a single thought by ID
     async getThoughtById(req, res) {
         try {
-            const thought = await Thought.findById(req.params.user_id);
+            const thought = await Thought.findById(req.params.thought_id);
             if (!thought) return res.status(404).json({
-                message: 'User with that ID not found'
+                message: 'Thought with that ID not found'
             })
             if (thought) return res.status(404).json({
                 message: 'Thought with that ID could not be found'
@@ -40,41 +40,27 @@ const thoughtController = {
             handleRouteError(err, res)
         }
     },
-    // Function to update a single user by ID
-//     async updateThoughtById(req, res){
-//     const { email, password, newPassword } = req.body
-//     try {
-//         if(email) {
-//             const user = await User.findByIdAndUpdate(req.params.user_id, {
-//                 $set: {
-//                     email: email
-//                 }
-//             }, { new: true });
+    // Function to update a single thought by ID
+    async updateThoughtById(req, res) {
+        const thoughtText = req.body
+        try {
+            const thought = await UserThought.findByIdAndUpdate(req.params.thought_id, {
+                $set: {
+                    thoughtText: thoughtText
+                }
+            }, { new: true });
 
-//             res.json(user);
-//         }
-//         if(password) {
-//             const user = await User.findById(req.params.user_id);
-//             if (!user) return res.status(404).json({
-//                 message: 'User with that ID not found'
-//             })
-//             // Check if old password is correct
-//             const pass_valid = await user.validatePass(password);
-//             if (!pass_valid) return res.status(401).json({
-//                 message: 'The old password is incorrect'
-//             })
-//             user.password = newPassword;
-//             user.save();
-//             res.json(user)
-//         }
-
-//     } catch(err) {
-//         handleRouteError(err, res)
-//     }
-// },
+            if (!thought) {
+                return res.status(404).json({ message: 'Thought with that ID not found' });
+            }
+            res.json(thought);
+        } catch (err) {
+            handleRouteError(err, res)
+        }
+    },
 
     // Function to delete a single thought by ID
-    async deleteThoughtById(req, res){
+    async deleteThoughtById(req, res) {
         try {
             await Thought.deleteOne({ _id: req.params.user_id })
             res.json({
@@ -84,7 +70,7 @@ const thoughtController = {
             handleRouteError(err, res);
         }
     }
-    }
+}
 
 
 
