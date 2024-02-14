@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3003;
 const connection = require('./config/connection');
 
 
-const {user_routes} = require('./routes/api');
+const routes = require('./routes');
 
 
 app.use(express.json());
@@ -15,7 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Load Routes
-app.use('/api', [user_routes])
+app.use(routes)
+
 
 
 connection.on('open', () => {

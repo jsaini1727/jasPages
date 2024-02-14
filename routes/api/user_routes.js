@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require('../../models/User')
+const User = require('../../models')
 
 const userController = require('../../controllers/userControllers')
 
@@ -18,7 +18,6 @@ router.get('/user/:user_id', userController.getUserById);
 router.put('/user/:user_id', userController.updateUserById);
 
 // // Delete a user
-
 router.delete('/user/:user_id', userController.deleteUserById )
     
 

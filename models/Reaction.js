@@ -5,7 +5,7 @@ const dayjs = require('dayjs');
 const reactionSchema = new Schema(
     {
         reactionId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             default: () => new mongoose.Types.ObjectId()
         },
 
@@ -31,6 +31,5 @@ const reactionSchema = new Schema(
     });
 
 
-const Reaction = model('Reaction', reactionSchema);
 
-module.exports = Reaction;
+module.exports = reactionSchema;
