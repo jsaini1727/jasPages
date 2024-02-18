@@ -1,12 +1,19 @@
 const Thought = require('../models/Thought')
 const { handleRouteError } = require('../helpers');
+const { User } = require('../models');
 const thoughtController = {
     // function to create a thought using the post route
     async createThought(req, res) {
         try {
-            const thought = await Thought.create(req.body);
+            const { thoughtText, username, userId } = req.body
+            const newThought = await Thought.create({
+                thoughtText: thoughtText,
+                username: username,
+                user: userId,
+            });
+            await User.findByIdAndUpdate(userId, { $push: { thoughts: newThought._id } });
 
-            res.json(thought);
+            res.json(newThought);
         } catch (error) {
             handleRouteError(error, res)
         }
@@ -89,18 +96,15 @@ const thoughtController = {
     // Function to delete a single reaction by its ID
     async deleteReactionById(req, res) {
         try {
-            const reaction = await Thought.findByIdAndUpdate(req.params.thought_id, {
-                $pull: {
-                    reactions: {
-                        reactionId: req.params.reaction_id
-                    }
-                }
-            }, {
+            const updatedThought = await Thought.findByIdAndUpdate(req.params.thought_id, {
+                $push: {reactions: req.body}
+            }, 
+            {
                 runValidators: true,
                 new: true
             });
 
-            res.json(reaction);
+            res.json(updatedThought);
         } catch (error) {
             handleRouteError(error, res)
         }
