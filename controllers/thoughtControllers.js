@@ -66,7 +66,11 @@ const thoughtController = {
     // Function to delete a single thought by ID
     async deleteThoughtById(req, res) {
         try {
-            await Thought.deleteOne({ _id: req.params.thought_id })
+            await Thought.deleteOne({ _id: req.params.thought_id });
+            await User.updateMany(
+                {thoughts: req.params.thought_id},
+                {pull: {thoughts: req.params.thought_id}
+            });
             res.json({
                 message: 'Thought deleted successfully'
             })
@@ -78,16 +82,14 @@ const thoughtController = {
     // function to create a reaction using the post route
     async createReaction(req, res) {
         try {
-            const reaction = await Thought.findByIdAndUpdate(req.params.thought_id, {
-                $push: {
-                    reactions: req.body
-                }
+            const updatedThought = await Thought.findByIdAndUpdate(req.params.thought_id, {
+                $push: {reactions: req.body}
             }, {
                 runValidators: true,
                 new: true
             });
 
-            res.json(reaction);
+            res.json(updatedThought);
         } catch (error) {
             handleRouteError(error, res)
         }
@@ -96,15 +98,20 @@ const thoughtController = {
     // Function to delete a single reaction by its ID
     async deleteReactionById(req, res) {
         try {
-            const updatedThought = await Thought.findByIdAndUpdate(req.params.thought_id, {
-                $push: {reactions: req.body}
-            }, 
-            {
+            const reaction = await Thought.findByIdAndUpdate(req.params.thought_id, {
+                $pull: {
+                    reactions: {
+                        reactionId: req.params.reaction_id
+                    }
+                }
+            }, {
                 runValidators: true,
                 new: true
             });
 
-            res.json(updatedThought);
+            res.json({
+                message: 'This reaction is deleted successfully'
+            });
         } catch (error) {
             handleRouteError(error, res)
         }
